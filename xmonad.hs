@@ -227,7 +227,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- SUPER + FUNCTION KEYS
 
   [ ((modMask, xK_e), spawn $ "atom" )
-  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'JetBrains Mono Medium:size=10' -nb '#1b1e2b' -nf 'white' -sb '#5294E2' -sf 'white'")
+  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'Ubuntu Mono:style=Bold:size=11' -h '21' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
   , ((modMask, xK_c), spawn $ "conky-toggle" )
   , ((modMask, xK_f), sendMessage FirstLayout)
 --  , ((modMask .|. controlMask, xK_space), sendMessage (T.Toggle "monocle"))
@@ -247,7 +247,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_F2), spawn $ "code" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
   , ((modMask, xK_F4), spawn $ "gimp" )
-  , ((modMask, xK_F5), spawn $ "meld" )
   , ((modMask, xK_F6), spawn $ "vlc --video-on-top" )
   , ((modMask, xK_F7), spawn $ "virtualbox" )
   , ((modMask, xK_F8), spawn $ "thunar" )
@@ -261,7 +260,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask .|. shiftMask , xK_o), incScreenSpacing 4)
 
   -- FUNCTION KEYS
-  , ((0, xK_F5), spawn $ "xfce4-appfinder" )
+--  , ((0, xK_F5), spawn $ "xfce4-appfinder" )
 
   -- SUPER + SHIFT KEYS
 
@@ -294,7 +293,6 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- ALT + ... KEYS
 
   , ((mod1Mask, xK_r), spawn $ "xmonad --restart" )
-  , ((mod1Mask, xK_F5), spawn $ "xfce4-appfinder" )
 
   --VARIETY KEYS WITH PYWAL
 
