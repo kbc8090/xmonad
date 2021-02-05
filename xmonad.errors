@@ -1,0 +1,7 @@
+
+xmonad.hs:452:1: warning: [-Wtabs]
+    Tab character found here, and in one further location.
+    Please use spaces instead.
+    |
+452 |                   , ppExtras  = [windowCount]
+    | ^^^^^^^^

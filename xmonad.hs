@@ -11,7 +11,7 @@ import XMonad.Config.Desktop
 --import XMonad.Config.Azerty
 import XMonad.Util.Run(spawnPipe)
 import XMonad.Actions.SpawnOn
-import XMonad.Util.EZConfig (additionalKeys, additionalMouseBindings)
+import XMonad.Util.EZConfig
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.UrgencyHook
 import XMonad.Actions.MouseResize
@@ -22,8 +22,8 @@ import qualified XMonad.Actions.DynamicWorkspaceOrder as DO
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
 --import XMonad.Layout.Magnifier
-import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
-import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
+--import XMonad.Layout.MultiToggle (mkToggle, single, EOT(EOT), (??))
+--import XMonad.Layout.MultiToggle.Instances (StdTransformers(NBFULL, MIRROR, NOBORDERS))
 -- import XMonad.Layout.LayoutCombinators hiding ( (|||) )
 --import XMonad hiding ( (|||) )  -- don't use the normal ||| operator
 --import XMonad.Layout.LayoutCombinators   -- use the one from LayoutCombinators instead
@@ -74,7 +74,7 @@ mydefaults = def {
         , workspaces          = myWorkspaces
         , keys                = myKeys
         , modMask             = myModMask
-        , borderWidth         = 1
+        , borderWidth         = 2
         , layoutHook          = myLayoutHook
         , startupHook         = myStartupHook
         , manageHook          = myManageHook
@@ -90,10 +90,13 @@ encodeCChar = map fromIntegral . B.unpack
 
 myTitleColor = "#c91a1a" -- color of window title
 myTitleLength = 80 -- truncate window title to this length
-myCurrentWSColor = "#6790eb" -- color of active workspace
+myCurrentWSColor = "#82aaff" -- color of active workspace
 myVisibleWSColor = "#000000" -- color of inactive workspace
 myUrgentWSColor = "#c91a1a" -- color of workspace with 'urgent' window
 myHiddenNoWindowsWSColor = "white"
+
+windowCount :: X (Maybe String)
+windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
 
 --myLayoutHook = spacing 6 $ gaps [(U,26), (D,4), (R,4), (L,4)]
 --myLayoutHook = spacingRaw False (Border 8 8 8 8) True (Border 8 8 8 8) True
@@ -136,11 +139,11 @@ monocle  = renamed [Replace "monocle"]
            -- $ windowNavigation
 --			  $ subLayout [] (smartBorders Simplest)
            $ limitWindows 20 Full
-tabs     = renamed [Replace "tabs"]
+--tabs     = renamed [Replace "tabs"]
            -- I cannot add spacing to this layout because it will
            -- add spacing between window and tabs which looks bad.
 --			  $ subLayout [] (noBorders Simplest)
-           $ tabbed shrinkText myTabTheme
+--           $ tabbed shrinkText myTabTheme
 
 myTabTheme = def { fontName            = "xft:JetBrainsMono Nerd Font:bold:size=10:antialias=true:hinting=true"
                  , activeColor         = "#82aaff"
@@ -160,7 +163,7 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange
                                 -- ||| magnify
                                  ||| smartBorders monocle
                                  -- ||| floats
-                                 ||| noBorders tabs
+                                 -- ||| smartBorders tabs
                                  -- ||| grid
                                  -- ||| spirals
                                  -- ||| threeCol
@@ -231,7 +234,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 --  , ((modMask, xK_f), sendMessage $ JumpToLayout "monocle")
   , ((modMask, xK_semicolon), sendMessage Expand )
   , ((modMask, xK_h), sendMessage Shrink )
-  , ((modMask, xK_m), spawn $ "pragha" )
+--  , ((modMask, xK_m), (MT.Toggle NBFULL) >> sendMessage ToggleStruts) 
   , ((modMask, xK_q), kill )
   , ((modMask, xK_r), spawn $ "rofi-theme-selector" )
   , ((modMask, xK_v), spawn $ "pavucontrol" )
@@ -239,7 +242,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
   , ((modMask, xK_x), spawn $ "oblogout" )
   , ((modMask, xK_Escape), spawn $ "xkill" )
-  , ((modMask, xK_Return), spawn $ "st" )
+  , ((modMask, xK_Return), spawn $ "urxvt" )
   , ((modMask, xK_F1), spawn $ "chromium" )
   , ((modMask, xK_F2), spawn $ "code" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
@@ -439,13 +442,14 @@ main = do
         xmonad $ ewmh $ mydefaults {
         logHook =  dynamicLogWithPP $ def {
         ppOutput = \x -> System.IO.hPutStrLn xmproc0 x
-        , ppCurrent = xmobarColor "#c3e88d" "" . wrap "[" "]" -- Current workspace in xmobar
-        , ppVisible = xmobarColor "#c3e88d" ""                -- Visible but not current workspace
+        , ppCurrent = xmobarColor "#b7e07c" "" . wrap "[" "]" -- Current workspace in xmobar
+        , ppVisible = xmobarColor "#b7e07c" ""                -- Visible but not current workspace
         , ppHidden = xmobarColor "#F07178" "" . wrap "" ""   -- Hidden workspaces in xmobar
         , ppHiddenNoWindows = xmobarColor "#82AAFF" ""        -- Hidden workspaces (no windows)
-        , ppTitle = xmobarColor "#f2ad3c" "" . shorten 90     -- Title of active window in xmobar
+        , ppTitle = xmobarColor "#ffb26b" "" . shorten 100     -- Title of active window in xmobar
         , ppSep =  "<fc=#c792ea> | </fc>"                     -- Separators in xmobar
         , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"  -- Urgent workspace
+		  , ppExtras  = [windowCount]
         , ppWsSep = "  "
         , ppOrder = \(ws:l:t:ex) -> [ws,l]++ex++[t]
  }
