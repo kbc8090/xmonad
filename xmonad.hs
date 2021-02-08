@@ -58,7 +58,10 @@ import qualified XMonad.StackSet as W
 import qualified Data.Map as M
 import qualified Data.ByteString as B
 
-import Control.Monad (liftM2)
+import Data.Maybe (maybeToList)
+import Graphics.X11.ExtraTypes.XF86
+
+import Control.Monad ((>=>), join, liftM, when)
 
 --mod4Mask= super key
 --mod1Mask= alt key
@@ -76,7 +79,7 @@ mydefaults = def {
         , modMask             = myModMask
         , borderWidth         = 2
         , layoutHook          = myLayoutHook
-        , startupHook         = myStartupHook
+        , startupHook         = myStartupHook >> addEWMHFullscreen
         , manageHook          = myManageHook
         , handleEventHook     = docksEventHook <+> fullscreenEventHook
 }
@@ -97,6 +100,22 @@ myHiddenNoWindowsWSColor = "white"
 
 windowCount :: X (Maybe String)
 windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace . W.current . windowset
+
+addNETSupported :: Atom -> X ()
+addNETSupported x   = withDisplay $ \dpy -> do
+    r               <- asks theRoot
+    a_NET_SUPPORTED <- getAtom "_NET_SUPPORTED"
+    a               <- getAtom "ATOM"
+    liftIO $ do
+       sup <- (join . maybeToList) <$> getWindowProperty32 dpy a_NET_SUPPORTED r
+       when (fromIntegral x `notElem` sup) $
+         changeProperty32 dpy r a_NET_SUPPORTED a propModeAppend [fromIntegral x]
+
+addEWMHFullscreen :: X ()
+addEWMHFullscreen   = do
+    wms <- getAtom "_NET_WM_STATE"
+    wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
+    mapM_ addNETSupported [wms, wfs]
 
 --myLayoutHook = spacing 6 $ gaps [(U,26), (D,4), (R,4), (L,4)]
 --myLayoutHook = spacingRaw False (Border 8 8 8 8) True (Border 8 8 8 8) True
