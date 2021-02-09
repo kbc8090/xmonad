@@ -263,7 +263,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_Escape), spawn $ "xkill" )
   , ((modMask, xK_Return), spawn $ "urxvt" )
   , ((modMask, xK_F1), spawn $ "chromium" )
-  , ((modMask, xK_F2), spawn $ "code" )
+  , ((modMask, xK_F2), spawn $ "firefox" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
   , ((modMask, xK_F4), spawn $ "gimp" )
   , ((modMask, xK_F6), spawn $ "vlc --video-on-top" )
