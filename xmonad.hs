@@ -246,7 +246,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- SUPER + FUNCTION KEYS
 
   [ ((modMask, xK_e), spawn $ "atom" )
-  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'Ubuntu Mono:style=Bold:size=11' -h '21' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
+  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'Ubuntu Mono:style=Bold:size=11' -h '22' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
   , ((modMask, xK_c), spawn $ "conky-toggle" )
   , ((modMask, xK_f), sendMessage FirstLayout)
 --  , ((modMask .|. controlMask, xK_space), sendMessage (T.Toggle "monocle"))
