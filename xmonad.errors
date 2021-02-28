@@ -1,7 +1,7 @@
 
-xmonad.hs:469:1: warning: [-Wtabs]
-    Tab character found here, and in one further location.
+xmonad.hs:116:1: warning: [-Wtabs]
+    Tab character found here, and in four further locations.
     Please use spaces instead.
     |
-469 |                   , ppExtras  = [windowCount]
+116 |          wms <- getAtom "_NET_WM_STATE"
     | ^^^^^^^^

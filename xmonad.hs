@@ -113,9 +113,9 @@ addNETSupported x   = withDisplay $ \dpy -> do
 
 addEWMHFullscreen :: X ()
 addEWMHFullscreen   = do
-    wms <- getAtom "_NET_WM_STATE"
-    wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
-    mapM_ addNETSupported [wms, wfs]
+	 wms <- getAtom "_NET_WM_STATE"
+	 wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
+	 mapM_ addNETSupported [wms, wfs]
 
 --myLayoutHook = spacing 6 $ gaps [(U,26), (D,4), (R,4), (L,4)]
 --myLayoutHook = spacingRaw False (Border 8 8 8 8) True (Border 8 8 8 8) True
@@ -144,7 +144,7 @@ tiled     = renamed [Replace "tiled"]
 --           $ addTabs shrinkText myTabTheme
 --           $ subLayout [] (Simplest)
            $ limitWindows 12
-           $ mySpacing 4
+           $ mySpacing 3
            $ ResizableTall 1 (3/100) (1/2) []
 -- magnify  = renamed [Replace "magnify"]
 --           $ windowNavigation
@@ -198,7 +198,7 @@ xmobarEscape = concatMap doubleLts
         
 myWorkspaces :: [String]   
 myWorkspaces = clickable . (map xmobarEscape) 
-               $ ["dev", "www", "sys", "doc", "irc", "music", "vid"]
+               $ [" dev ", " www ", " sys ", " doc ", " irc ", " music ", " vid "]
   where                                                                      
         clickable l = [ "<action=xdotool key super+" ++ show (n) ++ ">" ++ ws ++ "</action>" |
                       (i,ws) <- zip [1..7] l,                                        
@@ -459,7 +459,7 @@ main = do
         xmonad $ ewmh $ mydefaults {
         logHook =  dynamicLogWithPP $ def {
         ppOutput = \x -> System.IO.hPutStrLn xmproc0 x
-        , ppCurrent = xmobarColor "#b7e07c" "" . wrap "[" "]" -- Current workspace in xmobar
+        , ppCurrent = xmobarColor "#b7e07c" "#3c4457" . wrap "" "" -- Current workspace in xmobar
         , ppVisible = xmobarColor "#b7e07c" ""                -- Visible but not current workspace
         , ppHidden = xmobarColor "#F07178" "" . wrap "" ""   -- Hidden workspaces in xmobar
         , ppHiddenNoWindows = xmobarColor "#82AAFF" ""        -- Hidden workspaces (no windows)
@@ -467,7 +467,7 @@ main = do
         , ppSep =  "<fc=#c792ea> | </fc>"                     -- Separators in xmobar
         , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"  -- Urgent workspace
 		  , ppExtras  = [windowCount]
-        , ppWsSep = "  "
+        , ppWsSep = ""
         , ppOrder = \(ws:l:t:ex) -> [ws,l]++ex++[t]
  }
 }
