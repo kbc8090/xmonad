@@ -198,7 +198,8 @@ xmobarEscape = concatMap doubleLts
         
 myWorkspaces :: [String]   
 myWorkspaces = clickable . (map xmobarEscape) 
-               $ [" dev ", " www ", " sys ", " doc ", " irc ", " music ", " vid "]
+--               $ [" dev ", " www ", " sys ", " doc ", " irc ", " music ", " vid "]
+               $ [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 "]
   where                                                                      
         clickable l = [ "<action=xdotool key super+" ++ show (n) ++ ">" ++ ws ++ "</action>" |
                       (i,ws) <- zip [1..7] l,                                        
@@ -261,7 +262,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
   , ((modMask, xK_x), spawn $ "oblogout" )
   , ((modMask, xK_Escape), spawn $ "xkill" )
-  , ((modMask, xK_Return), spawn $ "urxvt -e fish" )
+  , ((modMask, xK_Return), spawn $ "urxvt" )
   , ((modMask, xK_F1), spawn $ "chromium --force-dark-mode" )
   , ((modMask, xK_F2), spawn $ "firefox" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
