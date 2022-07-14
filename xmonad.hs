@@ -4,6 +4,7 @@ import XMonad
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.ManageDocks
+--import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
 import XMonad.Hooks.EwmhDesktops
 --import XMonad.Hooks.Minimize
 import XMonad.Hooks.ManageHelpers(doFullFloat, doCenterFloat, isFullscreen, isDialog)
@@ -81,7 +82,8 @@ mydefaults = def {
         , layoutHook          = myLayoutHook
         , startupHook         = myStartupHook >> addEWMHFullscreen
         , manageHook          = myManageHook
-        , handleEventHook     = docksEventHook <+> fullscreenEventHook
+--        , handleEventHook     = docks <+> fullscreenEventHook
+--        , handleEventHook = docks <+> ewmhFullscreen
 }
 
 -- Autostart
@@ -113,9 +115,9 @@ addNETSupported x   = withDisplay $ \dpy -> do
 
 addEWMHFullscreen :: X ()
 addEWMHFullscreen   = do
-	 wms <- getAtom "_NET_WM_STATE"
-	 wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
-	 mapM_ addNETSupported [wms, wfs]
+    wms <- getAtom "_NET_WM_STATE"
+    wfs <- getAtom "_NET_WM_STATE_FULLSCREEN"
+    mapM_ addNETSupported [wms, wfs]
 
 --myLayoutHook = spacing 6 $ gaps [(U,26), (D,4), (R,4), (L,4)]
 --myLayoutHook = spacingRaw False (Border 8 8 8 8) True (Border 8 8 8 8) True
@@ -142,7 +144,8 @@ mySpacing' i = spacingRaw True (Border i i i i) True (Border i i i i) True
 tiled     = renamed [Replace "tiled"]
            -- $ windowNavigation
 --           $ addTabs shrinkText myTabTheme
---           $ subLayout [] (Simplest)
+--           $ smartBorders
+--           $ subLayout [] (smartborders Simplest)
            $ limitWindows 12
            $ mySpacing 3
            $ ResizableTall 1 (3/100) (1/2) []
@@ -262,7 +265,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
   , ((modMask, xK_x), spawn $ "oblogout" )
   , ((modMask, xK_Escape), spawn $ "xkill" )
-  , ((modMask, xK_Return), spawn $ "urxvt" )
+  , ((modMask, xK_Return), spawn $ "st" )
   , ((modMask, xK_F1), spawn $ "chromium --force-dark-mode" )
   , ((modMask, xK_F2), spawn $ "firefox" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
@@ -371,7 +374,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((mod1Mask, xK_Tab), nextWS)
 
   --Focus selected desktop
-  , ((modMask, xK_Tab), moveTo Next NonEmptyWS)
+  , ((modMask, xK_Tab), moveTo Next $ Not emptyWS)
 
   --Focus selected desktop
   , ((controlMask .|. mod1Mask , xK_Left ), prevWS)
@@ -457,7 +460,7 @@ myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
 main = do
 
         xmproc0 <- spawnPipe "xmobar -x 0 $HOME/.config/xmobar/xmobarrc" -- xmobar monitor 1
-        xmonad $ ewmh $ mydefaults {
+        xmonad $ ewmh $ docks $ ewmhFullscreen $ mydefaults {
         logHook =  dynamicLogWithPP $ def {
         ppOutput = \x -> System.IO.hPutStrLn xmproc0 x
         , ppCurrent = xmobarColor "#b7e07c" "#3c4457" . wrap "" "" -- Current workspace in xmobar
@@ -467,7 +470,7 @@ main = do
         , ppTitle = xmobarColor "#ffb26b" "" . shorten 100     -- Title of active window in xmobar
         , ppSep =  "<fc=#c792ea> | </fc>"                     -- Separators in xmobar
         , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"  -- Urgent workspace
-		  , ppExtras  = [windowCount]
+        , ppExtras  = [windowCount]
         , ppWsSep = ""
         , ppOrder = \(ws:l:t:ex) -> [ws,l]++ex++[t]
  }
