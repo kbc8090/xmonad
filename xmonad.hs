@@ -1,10 +1,11 @@
 import System.IO (Handle, hPutStrLn)
 import System.Exit
 import XMonad
+import XMonad.Config.Xfce
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
---import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
+--import XMonad.Hooks.ManageDocks
+import XMonad.Hooks.ManageDocks (avoidStruts, docks, manageDocks, ToggleStruts(..))
 import XMonad.Hooks.EwmhDesktops
 --import XMonad.Hooks.Minimize
 import XMonad.Hooks.ManageHelpers(doFullFloat, doCenterFloat, isFullscreen, isDialog)
@@ -18,7 +19,13 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Actions.MouseResize
 import qualified Codec.Binary.UTF8.String as UTF8
 import qualified XMonad.Actions.DynamicWorkspaceOrder as DO
-
+import           XMonad.Hooks.StatusBar              (StatusBarConfig,
+                                                      statusBarProp, withSB)
+import           XMonad.Hooks.StatusBar.PP           (PP (..), filterOutWsPP,
+                                                      shorten', wrap,
+                                                      xmobarAction,
+                                                      xmobarBorder, xmobarColor,
+                                                      xmobarFont, xmobarStrip)
 
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
@@ -49,7 +56,7 @@ import XMonad.Layout.MultiToggle.Instances
 --import XMonad.Layout.CenteredMaster(centerMaster)
 --import XMonad.Layout.SubLayouts
 --import XMonad.Layout.WindowNavigation
-import XMonad.Layout.WindowArranger (windowArrange, WindowArrangerMsg(..))
+import XMonad.Layout.WindowArranger
 import XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
 import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 
@@ -250,7 +257,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   -- SUPER + FUNCTION KEYS
 
   [ ((modMask, xK_e), spawn $ "atom" )
-  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'Ubuntu Mono:style=Bold:size=11' -h '22' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
+  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'Ubuntu Mono:style=Bold:size=12' -h '22' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
   , ((modMask, xK_c), spawn $ "conky-toggle" )
   , ((modMask, xK_f), sendMessage FirstLayout)
 --  , ((modMask .|. controlMask, xK_space), sendMessage (T.Toggle "monocle"))
@@ -265,7 +272,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
   , ((modMask, xK_x), spawn $ "oblogout" )
   , ((modMask, xK_Escape), spawn $ "xkill" )
-  , ((modMask, xK_Return), spawn $ "st" )
+  , ((modMask, xK_Return), spawn $ "urxvt -e fish" )
   , ((modMask, xK_F1), spawn $ "chromium --force-dark-mode" )
   , ((modMask, xK_F2), spawn $ "firefox" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
@@ -302,7 +309,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((controlMask .|. mod1Mask , xK_e ), spawn $ "arcolinux-tweak-tool")
   , ((controlMask .|. mod1Mask , xK_f ), spawn $ "firefox")
   , ((controlMask .|. mod1Mask , xK_g ), spawn $ "chromium -no-default-browser-check")
-  , ((controlMask .|. mod1Mask , xK_i ), spawn $ "nitrogen")
+  , ((controlMask .|. mod1Mask , xK_n ), spawn $ "nitrogen")
   , ((controlMask .|. mod1Mask , xK_m ), spawn $ "xfce4-settings-manager")
   , ((controlMask .|. mod1Mask , xK_o ), spawn $ "$HOME/.xmonad/scripts/compton-toggle.sh")
   , ((controlMask .|. mod1Mask , xK_p ), spawn $ "pamac-manager")
@@ -443,17 +450,16 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
 
 
-myMouseBindings (XConfig {XMonad.modMask = modMask}) = M.fromList $
-
+myMouseBindings XConfig {XMonad.modMask = modMask} =
+  M.fromList
     -- mod-button1, Set the window to floating mode and move by dragging
-    [ ((modMask, 1), (\w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster))
-
-    -- mod-button2, Raise the window to the top of the stack
-    , ((modMask, 2), (\w -> focus w >> windows W.shiftMaster))
-
+    [ ((modMask, button1)
+      , \w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster)
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modMask, 3), (\w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster))
-
+    , ((modMask, button3)
+      , \w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster)
+    -- you may also bind events to the mouse scroll wheel (button4 and button5)
+    -- set mouse side button to float and resize
     ]
 
 --XMOBAR
@@ -467,11 +473,12 @@ main = do
         , ppVisible = xmobarColor "#b7e07c" ""                -- Visible but not current workspace
         , ppHidden = xmobarColor "#F07178" "" . wrap "" ""   -- Hidden workspaces in xmobar
         , ppHiddenNoWindows = xmobarColor "#82AAFF" ""        -- Hidden workspaces (no windows)
-        , ppTitle = xmobarColor "#ffb26b" "" . shorten 100     -- Title of active window in xmobar
+        , ppTitle = xmobarColor "#ffb26b" "" . xmobarAction "xdotool key Super+q" "2" . xmobarAction "xdotool key Super+j" "4" . xmobarAction "xdotool key Super+k" "5" . shorten 100     -- Title of active window in xmobar
         , ppSep =  "<fc=#c792ea> | </fc>"                     -- Separators in xmobar
         , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"  -- Urgent workspace
         , ppExtras  = [windowCount]
         , ppWsSep = ""
+		  , ppLayout = xmobarColor "#b7e07c" "" . xmobarAction "xdotool key Super+space" "1"
         , ppOrder = \(ws:l:t:ex) -> [ws,l]++ex++[t]
  }
 }
