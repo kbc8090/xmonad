@@ -1,7 +1,6 @@
 import System.IO (Handle, hPutStrLn)
 import System.Exit
 import XMonad
-import XMonad.Config.Xfce
 import XMonad.Hooks.SetWMName
 import XMonad.Hooks.DynamicLog
 --import XMonad.Hooks.ManageDocks
@@ -19,14 +18,8 @@ import XMonad.Hooks.UrgencyHook
 import XMonad.Actions.MouseResize
 import qualified Codec.Binary.UTF8.String as UTF8
 import qualified XMonad.Actions.DynamicWorkspaceOrder as DO
-import           XMonad.Hooks.StatusBar              (StatusBarConfig,
-                                                      statusBarProp, withSB)
-import           XMonad.Hooks.StatusBar.PP           (PP (..), filterOutWsPP,
-                                                      shorten', wrap,
-                                                      xmobarAction,
-                                                      xmobarBorder, xmobarColor,
-                                                      xmobarFont, xmobarStrip)
-
+import XMonad.Hooks.StatusBar (StatusBarConfig, statusBarProp, withSB)
+import XMonad.Hooks.StatusBar.PP (PP (..), filterOutWsPP, shorten', wrap, xmobarAction, xmobarBorder, xmobarColor, xmobarFont, xmobarStrip)
 import XMonad.Layout.LayoutModifier
 import XMonad.Layout.LimitWindows (limitWindows, increaseLimit, decreaseLimit)
 --import XMonad.Layout.Magnifier
@@ -39,7 +32,7 @@ import XMonad.Layout.Spacing
 --import XMonad.Layout.Gaps
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.NoBorders
-import XMonad.Layout.Tabbed
+--import XMonad.Layout.Tabbed
 --import XMonad.Layout.Fullscreen (fullscreenFull)
 --import XMonad.Layout.Cross(simpleCross)
 --import XMonad.Layout.Spiral(spiral)
@@ -164,7 +157,7 @@ tiled     = renamed [Replace "tiled"]
 --           $ limitWindows 12
 --           $ mySpacing 8
 --           $ ResizableTall 1 (3/100) (1/2) []
-monocle  = renamed [Replace "monocle"]
+monocle  = renamed [Replace "max"]
            -- $ windowNavigation
 --			  $ subLayout [] (smartBorders Simplest)
            $ limitWindows 20 Full
@@ -174,14 +167,14 @@ monocle  = renamed [Replace "monocle"]
 --			  $ subLayout [] (noBorders Simplest)
 --           $ tabbed shrinkText myTabTheme
 
-myTabTheme = def { fontName            = "xft:JetBrainsMono Nerd Font:bold:size=10:antialias=true:hinting=true"
-                 , activeColor         = "#82aaff"
-                 , inactiveColor       = "#313846"
-                 , activeBorderColor   = "#1b1e2b"
-                 , inactiveBorderColor = "#1b1e2b"
-                 , activeTextColor     = "#1b1e2b"
-                 , inactiveTextColor   = "#d0d0d0"
-                 }
+--myTabTheme = def { fontName            = "xft:JetBrainsMono Nerd Font:bold:size=10:antialias=true:hinting=true"
+--                 , activeColor         = "#82aaff"
+--                 , inactiveColor       = "#313846"
+--                 , activeBorderColor   = "#1b1e2b"
+--                 , inactiveBorderColor = "#1b1e2b"
+--                 , activeTextColor     = "#1b1e2b"
+--                 , inactiveTextColor   = "#d0d0d0"
+--                 }
 
 -- The layout hook
 myLayoutHook = avoidStruts $ mouseResize $ windowArrange
@@ -272,9 +265,10 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
   , ((modMask, xK_x), spawn $ "oblogout" )
   , ((modMask, xK_Escape), spawn $ "xkill" )
-  , ((modMask, xK_Return), spawn $ "urxvt -e fish" )
+  , ((modMask, xK_Return), spawn $ "alacritty -e fish" )
   , ((modMask, xK_F1), spawn $ "chromium --force-dark-mode" )
   , ((modMask, xK_F2), spawn $ "firefox" )
+  , ((modMask, xK_n), spawn $ "nitrogen" )
   , ((modMask, xK_F3), spawn $ "inkscape" )
   , ((modMask, xK_F4), spawn $ "gimp" )
   , ((modMask, xK_F6), spawn $ "vlc --video-on-top" )
@@ -288,6 +282,7 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_o), incWindowSpacing 4)
   , ((modMask .|. shiftMask , xK_i), decScreenSpacing 4)
   , ((modMask .|. shiftMask , xK_o), incScreenSpacing 4)
+--  , ((modMask, xK_b), sequence_ [sendMessage ToggleStruts, toggleScreenSpacingEnabled, toggleWindowSpacingEnabled])
 
   -- FUNCTION KEYS
 --  , ((0, xK_F5), spawn $ "xfce4-appfinder" )
@@ -301,24 +296,24 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- CONTROL + ALT KEYS
 
-  , ((controlMask .|. mod1Mask , xK_Next ), spawn $ "conky-rotate -n")
-  , ((controlMask .|. mod1Mask , xK_Prior ), spawn $ "conky-rotate -p")
-  , ((controlMask .|. mod1Mask , xK_a ), spawn $ "xfce4-appfinder")
-  , ((controlMask .|. mod1Mask , xK_b ), spawn $ "thunar")
-  , ((controlMask .|. mod1Mask , xK_c ), spawn $ "catfish")
-  , ((controlMask .|. mod1Mask , xK_e ), spawn $ "arcolinux-tweak-tool")
-  , ((controlMask .|. mod1Mask , xK_f ), spawn $ "firefox")
-  , ((controlMask .|. mod1Mask , xK_g ), spawn $ "chromium -no-default-browser-check")
-  , ((controlMask .|. mod1Mask , xK_n ), spawn $ "nitrogen")
-  , ((controlMask .|. mod1Mask , xK_m ), spawn $ "xfce4-settings-manager")
-  , ((controlMask .|. mod1Mask , xK_o ), spawn $ "$HOME/.xmonad/scripts/compton-toggle.sh")
-  , ((controlMask .|. mod1Mask , xK_p ), spawn $ "pamac-manager")
-  , ((controlMask .|. mod1Mask , xK_r ), spawn $ "rofi-theme-selector")
-  , ((controlMask .|. mod1Mask , xK_s ), spawn $ "spotify")
-  , ((controlMask .|. mod1Mask , xK_t ), spawn $ "urxvt")
-  , ((controlMask .|. mod1Mask , xK_u ), spawn $ "pavucontrol")
-  , ((controlMask .|. mod1Mask , xK_v ), spawn $ "vivaldi-stable")
-  , ((controlMask .|. mod1Mask , xK_Return ), spawn $ "urxvt")
+  -- , ((controlMask .|. mod1Mask , xK_Next ), spawn $ "conky-rotate -n")
+  -- , ((controlMask .|. mod1Mask , xK_Prior ), spawn $ "conky-rotate -p")
+  -- , ((controlMask .|. mod1Mask , xK_a ), spawn $ "xfce4-appfinder")
+  -- , ((controlMask .|. mod1Mask , xK_b ), spawn $ "thunar")
+  -- , ((controlMask .|. mod1Mask , xK_c ), spawn $ "catfish")
+  -- , ((controlMask .|. mod1Mask , xK_e ), spawn $ "arcolinux-tweak-tool")
+  -- , ((controlMask .|. mod1Mask , xK_f ), spawn $ "firefox")
+  -- , ((controlMask .|. mod1Mask , xK_g ), spawn $ "chromium -no-default-browser-check")
+  -- , ((controlMask .|. mod1Mask , xK_n ), spawn $ "nitrogen")
+  -- , ((controlMask .|. mod1Mask , xK_m ), spawn $ "xfce4-settings-manager")
+  -- , ((controlMask .|. mod1Mask , xK_o ), spawn $ "$HOME/.xmonad/scripts/compton-toggle.sh")
+  -- , ((controlMask .|. mod1Mask , xK_p ), spawn $ "pamac-manager")
+  -- , ((controlMask .|. mod1Mask , xK_r ), spawn $ "rofi-theme-selector")
+  -- , ((controlMask .|. mod1Mask , xK_s ), spawn $ "spotify")
+  -- , ((controlMask .|. mod1Mask , xK_t ), spawn $ "urxvt")
+  -- , ((controlMask .|. mod1Mask , xK_u ), spawn $ "pavucontrol")
+  -- , ((controlMask .|. mod1Mask , xK_v ), spawn $ "vivaldi-stable")
+  -- , ((controlMask .|. mod1Mask , xK_Return ), spawn $ "urxvt")
 
   -- ALT + ... KEYS
 
@@ -456,7 +451,7 @@ myMouseBindings XConfig {XMonad.modMask = modMask} =
     [ ((modMask, button1)
       , \w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster)
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modMask, button3)
+    , ((modMask, button2)
       , \w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster)
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     -- set mouse side button to float and resize
@@ -473,7 +468,7 @@ main = do
         , ppVisible = xmobarColor "#b7e07c" ""                -- Visible but not current workspace
         , ppHidden = xmobarColor "#F07178" "" . wrap "" ""   -- Hidden workspaces in xmobar
         , ppHiddenNoWindows = xmobarColor "#82AAFF" ""        -- Hidden workspaces (no windows)
-        , ppTitle = xmobarColor "#ffb26b" "" . xmobarAction "xdotool key Super+q" "2" . xmobarAction "xdotool key Super+j" "4" . xmobarAction "xdotool key Super+k" "5" . shorten 100     -- Title of active window in xmobar
+        , ppTitle = xmobarColor "#ffb26b" "" . xmobarAction "xdotool key Super+q" "2" . xmobarAction "xdotool key Super+j" "1" . xmobarAction "xdotool key Super+j" "4" . xmobarAction "xdotool key Super+k" "5" . xmobarAction "jgmenu" "3" . shorten 100     -- Title of active window in xmobar
         , ppSep =  "<fc=#c792ea> | </fc>"                     -- Separators in xmobar
         , ppUrgent = xmobarColor "#C45500" "" . wrap "!" "!"  -- Urgent workspace
         , ppExtras  = [windowCount]
