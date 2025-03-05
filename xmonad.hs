@@ -72,7 +72,7 @@ import Control.Monad ((>=>), join, liftM, when)
 myModMask                     = mod4Mask
 mydefaults = def {
           normalBorderColor   = "#383c45"
-        , focusedBorderColor  = "#6cbd93"
+        , focusedBorderColor  = "#82dbff"
         , focusFollowsMouse   = True
         , mouseBindings       = myMouseBindings
         , workspaces          = myWorkspaces
@@ -80,7 +80,8 @@ mydefaults = def {
         , modMask             = myModMask
         , borderWidth         = 2
         , layoutHook          = myLayoutHook
-        , startupHook         = myStartupHook >> addEWMHFullscreen
+        , startupHook         = myStartupHook
+        -- , startupHook         = myStartupHook >> addEWMHFullscreen
         , manageHook          = myManageHook
 --        , handleEventHook     = docks <+> fullscreenEventHook
 --        , handleEventHook = docks <+> ewmhFullscreen
@@ -137,8 +138,8 @@ mySpacing i = spacingRaw False (Border i i i i) True (Border i i i i) True
 
 -- Below is a variation of the above except no borders are applied
 -- if fewer than two windows. So a single window has no gaps.
-mySpacing' :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
-mySpacing' i = spacingRaw True (Border i i i i) True (Border i i i i) True
+-- mySpacing' :: Integer -> l a -> XMonad.Layout.LayoutModifier.ModifiedLayout Spacing l a
+-- mySpacing' i = spacingRaw True (Border i i i i) True (Border i i i i) True
 
 -- Defining a bunch of layouts, many that I don't use.
 tiled     = renamed [Replace "tiled"]
@@ -147,7 +148,7 @@ tiled     = renamed [Replace "tiled"]
 --           $ smartBorders
 --           $ subLayout [] (smartborders Simplest)
            $ limitWindows 12
-           $ mySpacing 3
+           $ mySpacing 4
            $ ResizableTall 1 (3/100) (1/2) []
 -- magnify  = renamed [Replace "magnify"]
 --           $ windowNavigation
@@ -249,9 +250,9 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   ----------------------------------------------------------------------
   -- SUPER + FUNCTION KEYS
 
-  [ ((modMask, xK_e), spawn $ "atom" )
-  , ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'Ubuntu Mono:style=Bold:size=12' -h '22' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
-  , ((modMask, xK_c), spawn $ "conky-toggle" )
+  -- [ ((modMask, xK_e), spawn $ "atom" )
+  [ ((modMask, xK_d ), spawn $ "dmenu_run -i -fn 'JetBrains Mono:style=Bold:size=10' -h '21' -nb '#1b1e2b' -nf 'white' -sb '#82aaff' -sf '#1b1e2b'")
+  -- , ((modMask, xK_c), spawn $ "conky-toggle" )
   , ((modMask, xK_f), sendMessage FirstLayout)
 --  , ((modMask .|. controlMask, xK_space), sendMessage (T.Toggle "monocle"))
 --  , ((modMask, xK_f), sendMessage $ JumpToLayout "monocle")
@@ -259,25 +260,25 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_h), sendMessage Shrink )
 --  , ((modMask, xK_m), (MT.Toggle NBFULL) >> sendMessage ToggleStruts) 
   , ((modMask, xK_q), kill )
-  , ((modMask, xK_r), spawn $ "rofi-theme-selector" )
-  , ((modMask, xK_v), spawn $ "pavucontrol" )
-  , ((modMask, xK_w), spawn $ "vivaldi-stable" )
-  , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
-  , ((modMask, xK_x), spawn $ "oblogout" )
+  -- , ((modMask, xK_r), spawn $ "rofi-theme-selector" )
+  -- , ((modMask, xK_v), spawn $ "pavucontrol" )
+  -- , ((modMask, xK_w), spawn $ "vivaldi-stable" )
+  -- , ((modMask, xK_y), spawn $ "polybar-msg cmd toggle" )
+  -- , ((modMask, xK_x), spawn $ "oblogout" )
   , ((modMask, xK_Escape), spawn $ "xkill" )
-  , ((modMask, xK_Return), spawn $ "alacritty -e fish" )
+  , ((modMask, xK_Return), spawn $ "st -e zsh" )
   , ((modMask, xK_F1), spawn $ "chromium --force-dark-mode" )
   , ((modMask, xK_F2), spawn $ "firefox" )
   , ((modMask, xK_n), spawn $ "nitrogen" )
-  , ((modMask, xK_F3), spawn $ "inkscape" )
-  , ((modMask, xK_F4), spawn $ "gimp" )
+  -- , ((modMask, xK_F3), spawn $ "inkscape" )
+  -- , ((modMask, xK_F4), spawn $ "gimp" )
   , ((modMask, xK_F6), spawn $ "vlc --video-on-top" )
-  , ((modMask, xK_F7), spawn $ "virtualbox" )
-  , ((modMask, xK_F8), spawn $ "thunar" )
-  , ((modMask, xK_F9), spawn $ "evolution" )
-  , ((modMask, xK_F10), spawn $ "spotify" )
-  , ((modMask, xK_F11), spawn $ "rofi -show run -fullscreen" )
-  , ((modMask, xK_F12), spawn $ "rofi -show run" )
+  -- , ((modMask, xK_F7), spawn $ "virtualbox" )
+  -- , ((modMask, xK_F8), spawn $ "thunar" )
+  -- , ((modMask, xK_F9), spawn $ "evolution" )
+  -- , ((modMask, xK_F10), spawn $ "spotify" )
+  -- , ((modMask, xK_F11), spawn $ "rofi -show run -fullscreen" )
+  -- , ((modMask, xK_F12), spawn $ "rofi -show run" )
   , ((modMask, xK_i), decWindowSpacing 4)
   , ((modMask, xK_o), incWindowSpacing 4)
   , ((modMask .|. shiftMask , xK_i), decScreenSpacing 4)
@@ -317,25 +318,25 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
 
   -- ALT + ... KEYS
 
-  , ((mod1Mask, xK_r), spawn $ "xmonad --restart" )
+  -- , ((mod1Mask, xK_r), spawn $ "xmonad --restart" )
 
   --VARIETY KEYS WITH PYWAL
 
-  , ((mod1Mask .|. shiftMask , xK_f ), spawn $ "variety -f && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
-  , ((mod1Mask .|. shiftMask , xK_n ), spawn $ "variety -n && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
-  , ((mod1Mask .|. shiftMask , xK_p ), spawn $ "variety -p && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
-  , ((mod1Mask .|. shiftMask , xK_t ), spawn $ "variety -t && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
-  , ((mod1Mask .|. shiftMask , xK_u ), spawn $ "wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  -- , ((mod1Mask .|. shiftMask , xK_f ), spawn $ "variety -f && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  -- , ((mod1Mask .|. shiftMask , xK_n ), spawn $ "variety -n && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  -- , ((mod1Mask .|. shiftMask , xK_p ), spawn $ "variety -p && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  -- , ((mod1Mask .|. shiftMask , xK_t ), spawn $ "variety -t && wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
+  -- , ((mod1Mask .|. shiftMask , xK_u ), spawn $ "wal -i $(cat $HOME/.config/variety/wallpaper/wallpaper.jpg.txt)&")
 
   --CONTROL + SHIFT KEYS
 
-  , ((controlMask .|. shiftMask , xK_Escape ), spawn $ "xfce4-taskmanager")
+  -- , ((controlMask .|. shiftMask , xK_Escape ), spawn $ "xfce4-taskmanager")
 
   --SCREENSHOTS
 
   , ((0, xK_Print), spawn $ "scrot 'ArcoLinux-%Y-%m-%d-%s_screenshot_$wx$h.jpg' -e 'mv $f $$(xdg-user-dir PICTURES)'")
-  , ((controlMask, xK_Print), spawn $ "xfce4-screenshooter" )
-  , ((controlMask .|. shiftMask , xK_Print ), spawn $ "gnome-screenshot -i")
+  -- , ((controlMask, xK_Print), spawn $ "xfce4-screenshooter" )
+  -- , ((controlMask .|. shiftMask , xK_Print ), spawn $ "gnome-screenshot -i")
 
 
   --MULTIMEDIA KEYS
@@ -350,10 +351,10 @@ myKeys conf@(XConfig {XMonad.modMask = modMask}) = M.fromList $
   , ((modMask, xK_KP_Add), spawn $ "amixer -q set Master 5%+")
 
   -- Increase brightness
-  , ((0, xF86XK_MonBrightnessUp),  spawn $ "xbacklight -inc 5")
+  -- , ((0, xF86XK_MonBrightnessUp),  spawn $ "xbacklight -inc 5")
 
   -- Decrease brightness
-  , ((0, xF86XK_MonBrightnessDown), spawn $ "xbacklight -dec 5")
+  -- , ((0, xF86XK_MonBrightnessDown), spawn $ "xbacklight -dec 5")
 
 --  , ((0, xF86XK_AudioPlay), spawn $ "mpc toggle")
 --  , ((0, xF86XK_AudioNext), spawn $ "mpc next")
@@ -451,7 +452,7 @@ myMouseBindings XConfig {XMonad.modMask = modMask} =
     [ ((modMask, button1)
       , \w -> focus w >> mouseMoveWindow w >> windows W.shiftMaster)
     -- mod-button3, Set the window to floating mode and resize by dragging
-    , ((modMask, button2)
+    , ((modMask, button3)
       , \w -> focus w >> mouseResizeWindow w >> windows W.shiftMaster)
     -- you may also bind events to the mouse scroll wheel (button4 and button5)
     -- set mouse side button to float and resize
